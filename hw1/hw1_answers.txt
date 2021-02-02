@@ -1,0 +1,48 @@
+HW1
+The Learning Problem
+1. (i) Not learning. (ii) Supervised learning. (iii) Reinforcement learning
+   answer = [d]
+Correct
+
+2. (ii), (iv)
+   answer = [a]
+Correct
+
+Bins and Marbles
+3. P(x2=b | x1=b) = 2/3
+   answer = [d]
+Correct
+
+4. 0.45^10 = 3.405e-4
+   answer = [b]
+Correct
+
+5. 1-(1-p4)^1000 = 0.2886
+   answer = [c]
+Correct
+
+Feasibility of Learning
+6. All are the same.
+   answer = [e]
+Correct
+
+The perceptron Learning Algorithm
+7. Around 5 iterations
+   answer = [a]
+Wrong - Around 10 iterations
+   answer should be [b]
+
+8. Around 0.1 error rate
+   answer = [c]
+Correct
+
+9. Around 30 iterations
+   answer = [a]
+Wrong - Around 140 iterations
+   answer should be [b]
+
+10. Error rate around 0.01
+   answer = [b]
+Correct
+
+Note: Each iteration of PLA corresponds to one weight update.
