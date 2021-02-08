@@ -11,8 +11,11 @@ class PerceptronLearningAlgorithm:
         y = 1 if w[0] + w[1]*x1 + w[2]*x2 > 0 else -1
         return y
 
-    def solve(self, x1s, x2s, ys):
-        w = np.zeros(3)
+    def solve(self, x1s, x2s, ys, w_initial=None):
+        if w_initial is None:
+            w = np.zeros_like(ys)
+        else:
+            w = np.copy(w_initial)
 
         n_iters = 0
         while True:

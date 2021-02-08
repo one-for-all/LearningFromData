@@ -1,0 +1,47 @@
+HW2
+Hoeffding Inequality
+1. Average value of v_min is ~ 0.04
+   answer = [b]
+Correct
+
+2. c_1 and c_rand satisfies
+   answer = [d]
+Correct
+
+Error and Noise
+3. with prob lambda, y = f(x), in which case h is wrong with prob mu.
+   with prob 1-lambda, y = negate f(x), in which case h is wrong with prob 1-mu.
+   total prob for error = lambda * mu + (1-lambda)*(1-mu)
+   answer = [e]
+Correct
+
+4. Simplify the above error epression, get 2*lambda*mu - mu - lambda + 1
+   If take lambda = 1/2, the mu terms cancel, we get error = 1/2
+   answer = [b]
+Correct
+
+Linear Regression
+5. E_in ~ 0.04
+   answer = [c]
+Correct
+
+6. E_out ~ 0.05
+   answer = [c]
+Correct
+7. average iteration for PLA to converge ~ 6
+   answer = [a]
+Correct
+
+Nonlinear Transformation
+8. E_in ~ 0.5. Makes sense since line cannot separate data at all.
+   answer = [d]
+Correct
+
+9. First hypothesis's error matches the most with learned one, both of which
+   is ~ 0.1. And it makes sense since noise is 10%.
+   answer = [a]
+Correct
+
+10. E_out ~ 0.12. Makes sense.
+   answer = [b]
+Correct

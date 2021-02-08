@@ -1,4 +1,4 @@
-# Problem Specification
+# Linearly Separable Problem Specification
 import numpy as np
 
 
