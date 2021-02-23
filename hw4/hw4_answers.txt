@@ -1,0 +1,54 @@
+HW4
+Generalization Error
+1. Iteratively solve for N by sample complexity inequality, get 
+   N ~ 45296
+   answer = [d]
+Correct.
+
+2. Compute the bounds for various N.
+   For N = 10000, get that Devroye gives the best bound.
+   answer = [d]
+Correct.
+
+3. For N = 5, Parrondo and Van den Broek gives the best bound.
+   answer = [c]
+Correct.
+
+Bias and Variance
+4. The a value converges to around 1.42
+   answer = [e]
+Correct.
+
+5. Compute the squared difference between target function and the above average 
+   function, with expectation over the range from -1 to 1, obtain ~ 0.268
+   answer = [b]
+Correct.
+
+6. Compute the variance ~ 0.235
+   answer = [a]
+Correct.
+
+7. Compare with results in the book on constant model and affine model, the above model gives the least bias + var.
+   The squared models seem to be going to cause too much error at two sides.
+   answer = [b]
+Correct.
+
+VC Dimension
+8. If N points can be shattered, then m_H(N) would be 2^N.
+   Assuming N points can be shattered, then 
+   m_H(N+1) = 2 * 2^N - N choose q
+            = 2^(N+1) - N choose q
+   therefore, only when N choose q = 0, i.e. N < q, would m_H(N+1) = 2^(N+1)
+   therefore if N = q-1, then m_H(N+1) still shatters, therefore VC dimension is
+   q-1+1 = q
+   answer = [c]
+Correct.
+
+9. The intersection of the sets is a smaller set, therefore the N it can shatter  is <= the minimum of the individual sets.
+   answer = [b]
+Correct.
+
+10. For the union of sets, we can at least shatter the max N among the individual sets, just by using the set for that max N.
+    Then using 2 sets, where each set has N = 1, I showed an example where we can shatter 3.
+    answer = [e]
+Correct.
