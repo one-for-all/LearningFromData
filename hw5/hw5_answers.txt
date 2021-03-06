@@ -1,0 +1,51 @@
+HW5
+Linear Regression Error
+1. Compute the Ein for different Ns, get min N of 100, for Ein > 0.008
+   answer = [c]
+Correct.
+
+Nonlinear Transforms
+2. The larger the magnitude of x1, the more likely it is -1, therefore w1 < 0.
+   The larger the magnitude of x2, the more likely it is +1, therefore w2 > 0.
+   answer = [d]
+Correct
+
+3. The VC dimension of a linear model is d+1, which is 15 in this case.
+   answer = [c]
+Correct.
+
+Gradient Descent
+4. Compute gradient, get
+   answer = [e]
+Correct.
+
+5. Perform gradient descent, obtain that number of iterations is 10
+   answer = [d]
+Correct.
+
+6. Get (u, v) at end of the above gradient descent.
+   answer = [e]
+Correct.
+
+7. Perform coordinate descent for 15 iters, get E ~ 0.1398. Quite poor.
+   answer = [a]
+Correct.
+
+Logistic Regression
+8. Perform logistic regression. Eout ~ 0.106
+   answer = [d]
+Correct.
+
+9. Number of epochs ~ 341
+   answer = [a]
+Correct.
+
+PLA as SGD
+10. The perception learning algorithm updates the weight vector as follows:
+    w += yx for a misclassified data point
+    which can be re-arranged into the form of w -= -yx, where we can think of
+    gradient = -yx, for each misclassified point, and gradient = 0, for 
+    correctly classified point. The error function in 
+    choice e has this gradient.
+    answer = [e]
+Correct.
