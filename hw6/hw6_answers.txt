@@ -1,0 +1,56 @@
+HW6
+Overfitting and Deterministic Noise
+1. Deterministic noise is the difference between target function and the best hypothesis in H. With a smaller H, the difference tends to be larger.
+   answer = [b]
+Correct.
+
+Regularization with Weight Decay
+2. Perform linear regression and zero-thresholding, we get 
+   in-sample error of ~ 0.0286
+   out-sample error ~ 0.084
+   answer = [a]
+Correct.
+
+3. Perform linear regression with weight decay, get
+   in-sample error ~ 0.0286
+   out-sample error ~ 0.08
+   answer = [d]
+Correct.
+
+4. set lambda to 1e3, get 
+   in-sample error ~ 0.371
+   out-sample error ~ 0.436
+   answer = [e]
+Correct.
+
+5. Vary k from 2 to -2, get best k = -1
+   answer = [d]
+Correct.
+
+6. Minimum out-sample error achieved ~ 0.056
+   answer = [b]
+Correct.
+
+Regularization for Polynomials
+7. H(10, 0, 3) makes any x**3 and above to be zero, which is equivalent to a second-order polynomial. Similarly H(10, 0, 4) is equivalent to a 3rd-order polynomial. The intersection of them is the set of all second-order polynomial.
+   answer = [c]
+Correct.
+
+Neural Networks
+8. Compute that forward prop takes 22 operations, and back prop takes 25. Total is 47.
+   answer = [d]
+Correct.
+
+9. Arrange the nodes in sequence with max possible number of layers. In this case, every hidden has two nodes, one for the constant 1, and one other node.
+   number of weights = 10 + 2*18 = 46
+   answer = [a]
+Correct.
+
+10. Two hidden layers each of 18 units.
+    number of weights = 10*17 + 18*17 + 18 = 494
+    answer = [c]
+Incorrect.
+    correct answer is [e]
+    which we can get by having 22 units in the first hidden layer, and 14 units in the second hidden layer. The heuristic being that since there are more inputs than outputs (10 vs. 1), we could obtain more weights by putting more units in the earlier parts of the network.
+
+Note: Do not assume that equal partition of units would give the highest number of wights.
