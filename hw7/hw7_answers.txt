@@ -1,0 +1,23 @@
+HW7
+Validation
+1. For k = 6, validation error is smallest = 0.0.
+   answer = [d]
+
+2. On out-sample error, k = 7 achieves the smallest = 0.072
+   anwser = [e]
+
+3. With 10 training samples and 25 validation samples, k = 6 again achieves smallest  validation error = 0.08
+   answer = [d]
+
+4. k = 6 also achieves smallest test error = 0.192. Makes sense since we are now using more data for validation, which should give a better estimate of out-sample error.
+   answer = [d]
+
+5. Both chose k = 6. Out-sample errors are 0.084 and 0.192. Latter error is higher, which makes sense since less data for training would give worse out-sample error.
+   answer = [b]
+
+Validation Bias
+6. Ran experiment. Found expected value of min(e1, e2) ~= 0.334, closest to 0.4
+   answer = [d]
+
+Cross Validation
+7. 
