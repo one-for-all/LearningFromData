@@ -11,6 +11,12 @@ class PerceptronLearningAlgorithm:
         y = 1 if w[0] + w[1]*x1 + w[2]*x2 > 0 else -1
         return y
 
+    @staticmethod
+    def compute_multiple_labels(w, x1s, x2s):
+        ys = (w[0] + w[1] * x1s + w[2] * x2s > 0).astype(int)
+        ys[ys == 0] = -1
+        return ys
+
     def solve(self, x1s, x2s, ys, w_initial=None):
         if w_initial is None:
             w = np.zeros_like(ys)

@@ -20,4 +20,8 @@ Validation Bias
    answer = [d]
 
 Cross Validation
-7. 
+7. After calculation, none of the provided value is the correct rho.
+   answer = [e]
+
+PLA vs SVM
+
