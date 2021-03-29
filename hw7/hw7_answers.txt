@@ -2,26 +2,44 @@ HW7
 Validation
 1. For k = 6, validation error is smallest = 0.0.
    answer = [d]
+Correct.
 
 2. On out-sample error, k = 7 achieves the smallest = 0.072
    anwser = [e]
+Correct.
 
 3. With 10 training samples and 25 validation samples, k = 6 again achieves smallest  validation error = 0.08
    answer = [d]
+Correct.
 
 4. k = 6 also achieves smallest test error = 0.192. Makes sense since we are now using more data for validation, which should give a better estimate of out-sample error.
    answer = [d]
+Correct.
 
 5. Both chose k = 6. Out-sample errors are 0.084 and 0.192. Latter error is higher, which makes sense since less data for training would give worse out-sample error.
    answer = [b]
+Correct.
 
 Validation Bias
 6. Ran experiment. Found expected value of min(e1, e2) ~= 0.334, closest to 0.4
    answer = [d]
+Correct.
 
 Cross Validation
 7. Compute the constant and linear models of each two-points combination, and compute error. Equate the average of constant model and linear model, get rho = sqrt(9+4*sqrt(6))
    answer = [c]
+Correct.
 
 PLA vs SVM
+8. Implement SVM and compare with PLA. Get percentage of time SVM achieves lower test error ~ 62.8%
+   answer = [c]
+Correct.
+
+9. Sometimes CVXOPT cannot return a solution. Used OSQP. Get svm better percentage ~ 64.8%
+   answer = [d]
+Correct.
+
+10. Okay, turns out that the solution given by OSQP does not really conform to the constraints. Back to using CVXOPT with resampling of training data if cannot solve. Percentage of SVM being better was similar to above. Average number of support vectors ~ 3
+   answer = [b]
+Correct.
 
