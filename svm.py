@@ -27,5 +27,5 @@ if __name__ == "__main__":
         x1s_test, x2s_test, ys_test = problem.sample(N_test)
 
         # Compute PLA out-sample error
-        hypothesis_ys = pla.compute_multiple_labels(w_pla, x1s_test, x2s_test)
-        pla_error = sum(hypothesis_ys != ys_test) / N_test
+        pla_ys = pla.compute_multiple_labels(w_pla, x1s_test, x2s_test)
+        pla_error = sum(pla_ys != ys_test) / N_test
