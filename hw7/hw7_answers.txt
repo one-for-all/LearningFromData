@@ -20,8 +20,8 @@ Validation Bias
    answer = [d]
 
 Cross Validation
-7. After calculation, none of the provided value is the correct rho.
-   answer = [e]
+7. Compute the constant and linear models of each two-points combination, and compute error. Equate the average of constant model and linear model, get rho = sqrt(9+4*sqrt(6))
+   answer = [c]
 
 PLA vs SVM
 
