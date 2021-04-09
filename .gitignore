@@ -6,3 +6,12 @@ venv
 
 # Python cache
 __pycache__
+
+# Mac OS
+.DS_Store
+
+# pip install file
+get-pip.py
+
+# SVM library
+libsvm/

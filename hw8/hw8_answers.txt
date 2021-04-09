@@ -1,0 +1,8 @@
+HW8
+Primal versus Dual Problem
+1. The objective function is a quadratic function, and the constraints are linear constraints. Therefore the problem is a quadratic programming problem. The variables are w and b, which amount to d + 1 variables.
+   answer = [d]
+
+SVM with Soft Margins
+2. 
+
