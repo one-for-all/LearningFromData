@@ -2,6 +2,7 @@
 import numpy as np
 from tqdm import tqdm
 from qpsolvers import solve_qp
+from libsvm.python.svmutil import *
 
 
 class Kernel:
@@ -12,6 +13,7 @@ class Kernel:
 class Backend:
     QPSOLVER = "qpsolver"
     SKLERAN = "sklearn"
+    LIBSVM = "libsvm"
 
 
 class SoftSVM:
@@ -32,80 +34,100 @@ class SoftSVM:
         self.b = None
         self.X_support = None
 
-    def solve(self, X, y, K=None):
+    def fit(self, X, y, K=None):
         """
         :param X: Input matrix of shape (N, d)
         :param y: Target matrix of shape (N, 1), each value being +1 or -1.
         :param K: Pre-computed kernel matrix or None
         :return:
         """
-        N, d = X.shape
-
-        # Construct kernel matrix
-        if K is None:
+        if self.backend == Backend.LIBSVM:
             if self.kernel == Kernel.POLYNOMIAL:
-                K = np.power(np.matmul(X, X.T) + 1, self.Q)
+                kernel_type = 1
+            elif self.kernel == Kernel.RBF:
+                kernel_type = 2
             else:
-                raise NotImplementedError
+                raise ValueError
+            self.model = svm_train(y.flatten(), X, '-t {} -d {} -g 1 -r 1 -c {} -q'.format(kernel_type, self.Q, self.C))
 
-        # Quadratic matrix
-        Y = np.matmul(y, y.T)
-        P = np.multiply(K, Y)
-
-        # Linear matrix
-        q = -np.ones(N)
-
-        # Equality constraint matrix
-        A = y.T.astype(float)
-
-        # Equality target matrix
-        b = np.array([[0.0]])
-
-        # Lower-bound and upper-bound on the variables
-        lb = np.zeros(N)
-        ub = self.C*np.ones(N) if self.C else None
-
-        # Solve the QP program
-        alpha = solve_qp(
-            P=P, q=q, A=A, b=b, lb=lb, ub=ub, solver="cvxopt"
-        )
-
-        # Compute final hypothesis w and support vectors
-        if self.C:
-            selector = ~np.isclose(alpha, 0, atol=min(self.C*0.01, 1e-4))
         else:
-            selector = ~np.isclose(alpha, 0, atol=1e-4)
-        w = alpha[selector] * y.flatten()[selector]
-        X_support = X[selector]
+            N, d = X.shape
 
-        # Compute b
-        x_s = X_support[:1, :]
-        assert x_s.shape == (1, d)
-        y_s = y.flatten()[0]
-        K_s = np.power(np.matmul(x_s, X_support.T) + 1, self.Q)
-        b = y_s - np.sum(w * K_s)
+            # Construct kernel matrix
+            if K is None:
+                if self.kernel == Kernel.POLYNOMIAL:
+                    K = np.power(np.matmul(X, X.T) + 1, self.Q)
+                else:
+                    raise NotImplementedError
 
-        self.w = w
-        self.b = b
-        self.X_support = X_support
+            # Quadratic matrix
+            Y = np.matmul(y, y.T)
+            P = np.multiply(K, Y)
+
+            # Linear matrix
+            q = -np.ones(N)
+
+            # Equality constraint matrix
+            A = y.T.astype(float)
+
+            # Equality target matrix
+            b = np.array([[0.0]])
+
+            # Lower-bound and upper-bound on the variables
+            lb = np.zeros(N)
+            ub = self.C*np.ones(N) if self.C else None
+
+            # Solve the QP program
+            alpha = solve_qp(
+                P=P, q=q, A=A, b=b, lb=lb, ub=ub, solver="cvxopt"
+            )
+
+            # Compute final hypothesis w and support vectors
+            if self.C:
+                selector = ~np.isclose(alpha, 0, atol=min(self.C*0.01, 1e-4))
+            else:
+                selector = ~np.isclose(alpha, 0, atol=1e-4)
+            w = alpha[selector] * y.flatten()[selector]
+            X_support = X[selector]
+
+            # print(alpha[selector])
+
+            # Compute b
+            x_s = X_support[:1, :]
+            assert x_s.shape == (1, d)
+            y_s = y.flatten()[0]
+            K_s = np.power(np.matmul(x_s, X_support.T) + 1, self.Q)
+            b = y_s - np.sum(w * K_s)
+
+            self.w = w
+            self.b = b
+            self.X_support = X_support
 
     def compute_y(self, X):
-        if self.w is None:
-            raise ValueError
+        if self.backend == Backend.LIBSVM:
+            y, _, _ = svm_predict([], X, self.model, "-q")
+            return np.array(y).reshape((-1, 1))
+        else:
+            if self.w is None:
+                raise ValueError
 
-        w, b, X_support, = self.w, self.b, self.X_support
-        K = np.power(np.matmul(X, X_support.T) + 1, self.Q)
-        y = np.sum(w * K, axis=1) + b
+            w, b, X_support, = self.w, self.b, self.X_support
+            K = np.power(np.matmul(X, X_support.T) + 1, self.Q)
+            y = np.sum(w * K, axis=1) + b
 
-        y[y > 0] = 1
-        y[y <= 0] = -1
-        return y.reshape((-1, 1))
+            y[y > 0] = 1
+            y[y <= 0] = -1
+            return y.reshape((-1, 1))
 
     @property
     def num_support_vectors(self):
-        if self.w is None:
-            raise ValueError
-        return len(self.w)
+        if self.backend == Backend.LIBSVM:
+            # print(self.model.get_sv_coef())
+            return self.model.get_nr_sv()
+        else:
+            if self.w is None:
+                raise ValueError
+            return len(self.w)
 
 
 def error_rate(y1, y2):
@@ -131,58 +153,102 @@ def construct_one_vs_five(X, y):
     return target_X, target_y
 
 
-def digit_vs_all(training_X, training_y, test_X, test_y, digit, C, Q, training_K=None):
-    # Construct the target y matrix for one digit vs all others
-    target_y = np.zeros_like(training_y)
-    target_y[training_y == digit] = 1
-    target_y[training_y != digit] = -1
-
+def train_and_test(training_X, training_y, test_X, test_y, C, Q, backend):
     # Solve SVM
-    svm = SoftSVM(C=C, Q=Q, kernel=Kernel.POLYNOMIAL, backend=Backend.QPSOLVER)
-    svm.solve(training_X, target_y, K=training_K)
+    svm = SoftSVM(C=C, Q=Q, kernel=Kernel.POLYNOMIAL, backend=backend)
+    svm.fit(training_X, training_y)
 
     # Compute in-sample error rate
     hypo_y_in = svm.compute_y(training_X)
-    E_in = error_rate(hypo_y_in, target_y)
-
-    # Construct the target y matrix for one digit vs all others
-    target_test_y = np.zeros_like(test_y)
-    target_test_y[test_y == digit] = 1
-    target_test_y[test_y != digit] = -1
+    E_in = error_rate(hypo_y_in, training_y)
 
     # Compute out-sample error rate
     hypo_y_out = svm.compute_y(test_X)
-    E_out = error_rate(hypo_y_out, target_test_y)
+    E_out = error_rate(hypo_y_out, test_y)
 
     # Get number of support vectors
     num_svs = svm.num_support_vectors
 
-    print("E_in: {:.3f}\nE_out: {:.3f}\nnumber of support vectors: {}".format(E_in, E_out, num_svs))
+    print("E_in: {:.4f}\nE_out: {:.4f}\nnumber of support vectors: {}".format(E_in, E_out, num_svs))
+
+
+def digit_vs_all(training_X, training_y, test_X, test_y, digit, C, Q, backend, training_K=None):
+    # Construct the training y matrix for one digit vs all others
+    target_y = np.zeros_like(training_y)
+    target_y[training_y == digit] = 1
+    target_y[training_y != digit] = -1
+
+    # Construct the test y matrix for one digit vs all others
+    target_test_y = np.zeros_like(test_y)
+    target_test_y[test_y == digit] = 1
+    target_test_y[test_y != digit] = -1
+
+    train_and_test(training_X, target_y, test_X, target_test_y, C, Q, backend)
+
+
+def construct_digit_vs_digit(X, y, digit_a, digit_b):
+    # Construct y
+    a_or_b_indices = (y == digit_a) | (y == digit_b)
+    target_y = y[a_or_b_indices].reshape((-1, 1))
+    copy_target_y = np.copy(target_y)
+    target_y[copy_target_y == digit_a] = 1
+    target_y[copy_target_y == digit_b] = -1
+
+    # Construct x
+    target_X = X[a_or_b_indices.flatten()]
+
+    return target_X, target_y
+
+
+def digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q, backend):
+    # Construct the training X and y for one digit vs another
+    target_X, target_y = construct_digit_vs_digit(training_X, training_y, digit_a, digit_b)
+
+    # Construct the test X and y for one digit vs another
+    target_test_X, target_test_y = construct_digit_vs_digit(test_X, test_y, digit_a, digit_b)
+
+    train_and_test(target_X, target_y, target_test_X, target_test_y, C, Q, backend)
 
 
 if __name__ == "__main__":
     # Load training set
     training_set = np.loadtxt("features.train")
-    training_y = training_set[:200, :1].astype(int)
-    training_X = training_set[:200, 1:]
+    training_y = training_set[:, :1].astype(int)
+    training_X = training_set[:, 1:]
 
     # Load test set
     test_set = np.loadtxt("features.test")
     test_y = test_set[:, :1].astype(int)
     test_X = test_set[:, 1:]
 
-    # Parameters
-    target_digits = [2]
-    C = 100
-    Q = 3
+    experiment = 2
 
-    # Pre-compute kernel matrix to save time
-    training_K = np.power(np.matmul(training_X, training_X.T) + 1, Q)
+    if experiment == 1:
+        # Parameters
+        target_digits = [1, 3, 5, 7, 9]
+        C = 0.01
+        Q = 2
 
-    for digit in tqdm(target_digits):
-        print("digit {} with backend {}:".format(digit, Backend.QPSOLVER))
-        digit_vs_all(training_X, training_y, test_X, test_y, digit, C, Q, training_K=training_K)
-        print("==============")
+        # Pre-compute kernel matrix to save time
+        # training_K = np.power(np.matmul(training_X, training_X.T) + 1, Q)
+
+        for digit in tqdm(target_digits):
+            # print("digit {} with backend {}:".format(digit, Backend.QPSOLVER))
+            # digit_vs_all(training_X, training_y, test_X, test_y, digit, C, Q, backend=Backend.QPSOLVER, training_K=training_K)
+            # print("==============")
+            print("digit {} with backend {}:".format(digit, Backend.LIBSVM))
+            digit_vs_all(training_X, training_y, test_X, test_y, digit, C, Q, backend=Backend.LIBSVM)
+            print("################################")
+    elif experiment == 2:
+        C_values = [0.001, 0.01, 0.1, 1]
+        Q = 2
+        digit_a = 1
+        digit_b = 5
+        for C in tqdm(C_values):
+            print("digit {} vs digit {}, C: {}:".format(digit_a, digit_b, C))
+            digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q, backend=Backend.LIBSVM)
+            print("################################")
+
 
     # # Solve classification task of one digit vs others
     # svm = SoftSVM(C=C, Q=Q)
@@ -194,7 +260,7 @@ if __name__ == "__main__":
     #     target_y[training_y == target] = 1
     #     target_y[training_y != target] = -1
     #
-    #     w, b, X_support = svm.solve(training_X, target_y, K=training_K)
+    #     w, b, X_support = svm.fit(training_X, target_y, K=training_K)
     #     hypo_y = svm.compute_y(w, b, X_support, training_X)
     #     E_in_s.append(error_rate(hypo_y, target_y.flatten()))
     #     num_svs.append(len(w))
@@ -218,7 +284,7 @@ if __name__ == "__main__":
     # num_svs = []
     # for Q in tqdm(Q_values):
     #     svm = SoftSVM(C=C, Q=Q)
-    #     w, b, X_support = svm.solve(train_X, train_y, K=None)
+    #     w, b, X_support = svm.fit(train_X, train_y, K=None)
     #     hypo_y_in = svm.compute_y(w, b, X_support, train_X)
     #     E_in_s.append(error_rate(hypo_y_in, train_y.flatten()))
     #     hypo_y_out = svm.compute_y(w, b, X_support, test_X)

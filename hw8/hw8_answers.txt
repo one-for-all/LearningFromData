@@ -4,52 +4,20 @@ Primal versus Dual Problem
    answer = [d]
 
 SVM with Soft Margins
-2. Implement with quadratic programming package. Find digit 6 has highest Ein ~ 0.31
-	E-insample for digit 0 is 0.1156219997256892, with 2179 support vectors
-	E-insample for digit 2 is 0.12508572212316554, with 6256 support vectors
-	E-insample for digit 4 is 0.24221643121656838, with 6129 support vectors
-	E-insample for digit 6 is 0.3146344808668221, with 5860 support vectors
-	E-insample for digit 8 is 0.07543546838568098, with 7282 support vectors
-   answer = [d]
+Somehow, implementing SVM with quadratic programming package such as qpsolver with 'cvxopt' would give much larger number of support vectors.
+For the below problems, we use libsvm.
 
-3. Digit 1 has lowest Ein ~ 0.01
-	E-insample for digit 1 is 0.014538472088876698, with 386 support vectors
-	E-insample for digit 3 is 0.09024825126868742, with 6746 support vectors
-	E-insample for digit 5 is 0.1706213139487039, with 5454 support vectors
-	E-insample for digit 7 is 0.24934851186394186, with 4722 support vectors
-	E-insample for digit 9 is 0.23796461390755727, with 5943 support vectors
+2. Implement with libsvm. Find digit 0 has highest E_in ~ 0.106.
    answer = [a]
 
-4. Digit 6 and 1 differs in number of support vectors by more than 5000.
-   answer = [e]
+3. Digit 1 has lowest E_in ~ 0.014.
+   answer = [a]
 
-5. The experimental result is as follows:
-	C: 0.001, E_in: 0.0064061499039077515, E_out: 0.018867924528301886, num sv: 76
-	C: 0.01, E_in: 0.004484304932735426, E_out: 0.018867924528301886, num sv: 34
-	C: 0.1, E_in: 0.037155669442664956, E_out: 0.05660377358490566, num sv: 24
-	C: 1, E_in: 0.03267136450992953, E_out: 0.04716981132075472, num sv: 24
-    Number of support vectors is non-increasing, but not strictly goes down as C increases.
-    answer = [e]
+4. Digit 0 has number of support vectors 2180. Digit 1 has 386. Difference = 1794.
+   answer = [c]
 
-6. Results of different experiments:
-C = 0.0001
-Q: 2, E_in: 0.019218449711723255, E_out: 0.02830188679245283, num sv: 236
-Q: 5, E_in: 0.004484304932735426, E_out: 0.01650943396226415, num sv: 27
+5. Ran experiment. Other C values give E_in ~ 0.0045, while C = 1 gives E_in ~ 0.0032, which is the lowest.
+   It makes sense since higher C means we allow less of the violation of the margin, which should give lower training error.
+   answer = [d]
 
-C = 0.001
-Q: 2, E_in: 0.0064061499039077515, E_out: 0.018867924528301886, num sv: 76
-Q: 5, E_in: 0.9801409352978859, E_out: 0.9716981132075472, num sv: 24
-
-C = 0.01
-Q: 2, E_in: 0.004484304932735426, E_out: 0.018867924528301886, num sv: 34
-Q: 5, E_in: 0.356181934657271, E_out: 0.37735849056603776, num sv: 23
-
-C = 1
-Q: 2, E_in: 0.03267136450992953, E_out: 0.04716981132075472, num sv: 24
-Q: 5, E_in: 0.356181934657271, E_out: 0.37735849056603776, num sv: 21
-
-   According to the results, both [b] and [c] are correct.
-   answer = [b, c]
-
-7. 
-
+6. 
