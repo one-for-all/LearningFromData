@@ -2,6 +2,7 @@ HW8
 Primal versus Dual Problem
 1. The objective function is a quadratic function, and the constraints are linear constraints. Therefore the problem is a quadratic programming problem. The variables are w and b, which amount to d + 1 variables.
    answer = [d]
+Correct.
 
 SVM with Soft Margins
 Somehow, implementing SVM with quadratic programming package such as qpsolver with 'cvxopt' would give much larger number of support vectors.
@@ -9,15 +10,39 @@ For the below problems, we use libsvm.
 
 2. Implement with libsvm. Find digit 0 has highest E_in ~ 0.106.
    answer = [a]
+Correct.
 
 3. Digit 1 has lowest E_in ~ 0.014.
    answer = [a]
+Correct.
 
 4. Digit 0 has number of support vectors 2180. Digit 1 has 386. Difference = 1794.
    answer = [c]
+Correct.
 
 5. Ran experiment. Other C values give E_in ~ 0.0045, while C = 1 gives E_in ~ 0.0032, which is the lowest.
    It makes sense since higher C means we allow less of the violation of the margin, which should give lower training error.
    answer = [d]
+Correct.
 
-6. 
+6. Ran the experiments. Found b is true.
+   answer = [b]
+Correct.
+
+Cross Validation
+7. Ran cross-validation experiment with libsvm built-in functionality. Find C = 0.001 is selected most often.
+   answer = [b]
+Correct.
+
+8. The average E_cv for C = 0.001 is ~ 0.0048
+   answer = [c]
+Correct.
+
+RBF Kernel
+9. Ran experiment. Obtain C = 10^6 gives lowest E_in ~ 0.0006
+   answer = [e]
+Correct.
+
+10. C = 100 gives lowest E_out ~ 0.0189
+    answer = [c]
+Correct.

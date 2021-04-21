@@ -34,7 +34,7 @@ class SoftSVM:
         self.b = None
         self.X_support = None
 
-    def fit(self, X, y, K=None):
+    def fit(self, X, y, K=None, cross_validation=False):
         """
         :param X: Input matrix of shape (N, d)
         :param y: Target matrix of shape (N, 1), each value being +1 or -1.
@@ -44,11 +44,17 @@ class SoftSVM:
         if self.backend == Backend.LIBSVM:
             if self.kernel == Kernel.POLYNOMIAL:
                 kernel_type = 1
+                args = '-t {} -d {} -g 1 -r 1 -c {} -q'.format(kernel_type, self.Q, self.C)
             elif self.kernel == Kernel.RBF:
                 kernel_type = 2
+                args = '-t {} -g 1 -r 1 -c {} -q'.format(kernel_type, self.C)
             else:
                 raise ValueError
-            self.model = svm_train(y.flatten(), X, '-t {} -d {} -g 1 -r 1 -c {} -q'.format(kernel_type, self.Q, self.C))
+            if cross_validation:
+                args += " -v 10"
+                cv_accuracy = svm_train(y.flatten(), X, args)
+                return cv_accuracy
+            self.model = svm_train(y.flatten(), X, args)
 
         else:
             N, d = X.shape
@@ -153,9 +159,9 @@ def construct_one_vs_five(X, y):
     return target_X, target_y
 
 
-def train_and_test(training_X, training_y, test_X, test_y, C, Q, backend):
+def train_and_test(training_X, training_y, test_X, test_y, C, Q, backend, kernel):
     # Solve SVM
-    svm = SoftSVM(C=C, Q=Q, kernel=Kernel.POLYNOMIAL, backend=backend)
+    svm = SoftSVM(C=C, Q=Q, kernel=kernel, backend=backend)
     svm.fit(training_X, training_y)
 
     # Compute in-sample error rate
@@ -200,14 +206,34 @@ def construct_digit_vs_digit(X, y, digit_a, digit_b):
     return target_X, target_y
 
 
-def digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q, backend):
+def digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q, backend, kernel=Kernel.POLYNOMIAL):
     # Construct the training X and y for one digit vs another
     target_X, target_y = construct_digit_vs_digit(training_X, training_y, digit_a, digit_b)
 
     # Construct the test X and y for one digit vs another
     target_test_X, target_test_y = construct_digit_vs_digit(test_X, test_y, digit_a, digit_b)
 
-    train_and_test(target_X, target_y, target_test_X, target_test_y, C, Q, backend)
+    train_and_test(target_X, target_y, target_test_X, target_test_y, C, Q, backend, kernel=kernel)
+
+
+def digit_vs_digit_cv(training_X, training_y, digit_a, digit_b, C_values, Q, backend, N):
+    # Construct the training X and y for one digit vs another
+    target_X, target_y = construct_digit_vs_digit(training_X, training_y, digit_a, digit_b)
+
+    selection_counts = [0] * len(C_values)
+    for _ in range(N):
+        best_idx = None
+        best_accuracy = None
+        for idx, C in enumerate(C_values):
+            svm = SoftSVM(C=C, Q=Q, kernel=Kernel.POLYNOMIAL, backend=backend)
+            accuracy = svm.fit(target_X, target_y, cross_validation=True)
+            if best_idx is None or accuracy > best_accuracy:
+                best_idx = idx
+                best_accuracy = accuracy
+        selection_counts[best_idx] += 1
+    most_selected_C = C_values[np.argmax(selection_counts)]
+    print("Selection counts: {}".format(selection_counts))
+    print("Most selected C for {} runs: {}".format(N, most_selected_C))
 
 
 if __name__ == "__main__":
@@ -221,7 +247,7 @@ if __name__ == "__main__":
     test_y = test_set[:, :1].astype(int)
     test_X = test_set[:, 1:]
 
-    experiment = 2
+    experiment = 5
 
     if experiment == 1:
         # Parameters
@@ -248,7 +274,33 @@ if __name__ == "__main__":
             print("digit {} vs digit {}, C: {}:".format(digit_a, digit_b, C))
             digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q, backend=Backend.LIBSVM)
             print("################################")
-
+    elif experiment == 3:
+        Q_values = [2, 5]
+        C_values = [0.0001, 0.001, 0.01, 1]
+        digit_a = 1
+        digit_b = 5
+        for C in C_values:
+            for Q in Q_values:
+                print("digit {} vs digit {}, C: {}, Q: {}".format(digit_a, digit_b, C, Q))
+                digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q, backend=Backend.LIBSVM)
+                print("################################")
+    elif experiment == 4:
+        digit_a = 1
+        digit_b = 5
+        N = 100
+        Q = 2
+        C_values = [0.0001, 0.001, 0.01, 0.1, 1]
+        print("digit {} vs digit {}, C_values: {}, Q: {}".format(digit_a, digit_b, C_values, Q))
+        digit_vs_digit_cv(training_X, training_y, digit_a, digit_b, C_values, Q, backend=Backend.LIBSVM, N=N)
+        print("#####################################")
+    elif experiment == 5:
+        digit_a = 1
+        digit_b = 5
+        C_values = [0.01, 1, 100, int(1e4), int(1e6)]
+        for C in C_values:
+            print("digit {} vs digit {}, C: {}".format(digit_a, digit_b, C))
+            digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q=None, backend=Backend.LIBSVM, kernel=Kernel.RBF)
+            print("#################################")
 
     # # Solve classification task of one digit vs others
     # svm = SoftSVM(C=C, Q=Q)
