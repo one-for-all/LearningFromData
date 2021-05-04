@@ -142,23 +142,6 @@ def error_rate(y1, y2):
     return np.sum(y1 != y2) / N
 
 
-def construct_one_vs_five(X, y):
-    one_indices = (y.flatten() == 1)
-    five_indices = (y.flatten() == 5)
-
-    one_X = X[one_indices]
-    five_X = X[five_indices]
-    target_X = np.vstack((one_X, five_X))
-
-    N_one = one_X.shape[0]
-    N = target_X.shape[0]
-
-    target_y = np.ones((N, 1))
-    target_y[N_one:] = -1
-
-    return target_X, target_y
-
-
 def train_and_test(training_X, training_y, test_X, test_y, C, Q, backend, kernel):
     # Solve SVM
     svm = SoftSVM(C=C, Q=Q, kernel=kernel, backend=backend)
@@ -301,48 +284,3 @@ if __name__ == "__main__":
             print("digit {} vs digit {}, C: {}".format(digit_a, digit_b, C))
             digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, C, Q=None, backend=Backend.LIBSVM, kernel=Kernel.RBF)
             print("#################################")
-
-    # # Solve classification task of one digit vs others
-    # svm = SoftSVM(C=C, Q=Q)
-    # target_digits = [0, 2, 4, 6, 8]
-    # E_in_s = []
-    # num_svs = []
-    # for target in tqdm(target_digits):
-    #     target_y = np.zeros_like(training_y)
-    #     target_y[training_y == target] = 1
-    #     target_y[training_y != target] = -1
-    #
-    #     w, b, X_support = svm.fit(training_X, target_y, K=training_K)
-    #     hypo_y = svm.compute_y(w, b, X_support, training_X)
-    #     E_in_s.append(error_rate(hypo_y, target_y.flatten()))
-    #     num_svs.append(len(w))
-    #
-    # for digit, E_in, num_sv in zip(target_digits, E_in_s, num_svs):
-    #     print("E-insample for digit {} is {}, with {} support vectors".format(digit, E_in, num_sv))
-
-    # # Construct 1 vs 5 dataset
-    # train_X, train_y = construct_one_vs_five(training_X, training_y)
-    # test_X, test_y = construct_one_vs_five(test_X, test_y)
-    #
-    # # C_values = [0.001, 0.01, 0.1, 1]
-    # C = 1
-    # Q_values = [2, 5]
-    # # Q = 2
-    #
-    # # train_K = np.power(np.matmul(train_X, train_X.T) + 1, Q)
-    #
-    # E_in_s = []
-    # E_out_s = []
-    # num_svs = []
-    # for Q in tqdm(Q_values):
-    #     svm = SoftSVM(C=C, Q=Q)
-    #     w, b, X_support = svm.fit(train_X, train_y, K=None)
-    #     hypo_y_in = svm.compute_y(w, b, X_support, train_X)
-    #     E_in_s.append(error_rate(hypo_y_in, train_y.flatten()))
-    #     hypo_y_out = svm.compute_y(w, b, X_support, test_X)
-    #     E_out_s.append(error_rate(hypo_y_out, test_y.flatten()))
-    #     num_svs.append(len(w))
-    #
-    # print("C = {}".format(C))
-    # for Q, E_in, E_out, num_sv in zip(Q_values, E_in_s, E_out_s, num_svs):
-    #     print("Q: {}, E_in: {}, E_out: {}, num sv: {}".format(Q, E_in, E_out, num_sv))
