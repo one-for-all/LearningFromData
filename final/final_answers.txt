@@ -29,4 +29,15 @@ Regularized Linear Regression
    A note: It seems that for most digits, we really can't separate the digits no matter which transform we used. The algorithm just classifies most points as not being that digit.
    answer = [b]
 
-9. 
+9. Ran the experiment. [e] is true. E_out for "5 vs. all" improves with transform, but only by a very small amount.
+   answer = [e]
+
+10. Ran the experiment. Going from lambda = 1 to lambda = 0.01, E_in decreases, while E_out increases, which indicates overfitting. And it makes sense since as lambda gets smaller, we are putting less regularization which makes the model more prone to overfit.
+   answer = [a]
+
+Support Vector Machines
+11. Perform the transform and draw the points on a graph. Visually find that the max-margin separating plane is a vertical line at z_1 = 0.5. Therefore the equation is z_1 - 0.5 = 0.
+    answer = [c]
+
+12. 
+

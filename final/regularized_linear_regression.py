@@ -78,6 +78,30 @@ def digit_vs_all(training_X, training_y, test_X, test_y, digit, lambda_, nonline
     train_and_test(training_X, target_y, test_X, target_test_y, lambda_, nonlinear_transform)
 
 
+def construct_digit_vs_digit(X, y, digit_a, digit_b):
+    # Construct y
+    a_or_b_indices = (y == digit_a) | (y == digit_b)
+    target_y = y[a_or_b_indices].reshape((-1, 1))
+    copy_target_y = np.copy(target_y)
+    target_y[copy_target_y == digit_a] = 1
+    target_y[copy_target_y == digit_b] = -1
+
+    # Construct x
+    target_X = X[a_or_b_indices.flatten()]
+
+    return target_X, target_y
+
+
+def digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, lambda_, nonlinear_transform):
+    # Construct the training X and y for one digit vs another
+    target_X, target_y = construct_digit_vs_digit(training_X, training_y, digit_a, digit_b)
+
+    # Construct the test X and y for one digit vs another
+    target_test_X, target_test_y = construct_digit_vs_digit(test_X, test_y, digit_a, digit_b)
+
+    train_and_test(target_X, target_y, target_test_X, target_test_y, lambda_, nonlinear_transform)
+
+
 def add_bias_transform(X):
     N = X.shape[0]
     Z = np.ones([N, 3])
@@ -108,7 +132,7 @@ if __name__ == "__main__":
     test_y = test_set[:, :1].astype(int)
     test_X = test_set[:, 1:]
 
-    experiment = 2
+    experiment = 4
 
     if experiment == 1:
         lambda_ = 1
@@ -122,3 +146,19 @@ if __name__ == "__main__":
             print("digit: {}, lambda: {}, with nonlinear transform".format(digit, lambda_))
             digit_vs_all(training_X, training_y, test_X, test_y, digit, lambda_, nonlinear_feature_transform)
             print("===========")
+    elif experiment == 3:
+        lambda_ = 1
+        for digit in range(10):
+            print("digit: {}, lambda: {}".format(digit, lambda_))
+            print("without transform:")
+            digit_vs_all(training_X, training_y, test_X, test_y, digit, lambda_, add_bias_transform)
+            print("with transform:")
+            digit_vs_all(training_X, training_y, test_X, test_y, digit, lambda_, nonlinear_feature_transform)
+            print("=====================")
+    elif experiment == 4:
+        digit_a = 1
+        digit_b = 5
+        for lambda_ in [0.01, 1]:
+            print("digit {} vs digit {}, lambda: {}, with transform".format(digit_a, digit_b, lambda_))
+            digit_vs_digit(training_X, training_y, test_X, test_y, digit_a, digit_b, lambda_, nonlinear_feature_transform)
+            print("========================")
