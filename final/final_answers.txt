@@ -1,0 +1,32 @@
+Final
+Nonlinear Transforms
+1. Count all terms of order <= 10 with 2 variables. Get 2 + 3 + .... + 11 = (2+11)*10/2 = 65 terms.
+   Answer = [e]
+
+Bias and Variance
+2. I think the expectation of logistic regression model might not be a logistic regression model. Consider two logistic regression a = theta(x) and b = theta(-x). The average of them will tend to 0.5 as x-> infinity and x-> minus infinity. This average would not be a logistic regression model.
+   answer = [d]
+
+Overfitting
+3. [d] is false. Suppose we have two hypothesis A and B. E_in_A = 1, E_out_A = 2, and E_in_B = 0, E_out_B = 3. In this case, there is overfitting. While if E_in_B = 2, E_out_B = 5, (keeping their difference the same), there is no overfitting.
+   answer = [d]
+
+4. [d] is true, since stochastic noise is in the dataset that we try to fit, before considering what our hypothesis set is.
+   answer = [d]
+
+Regularization
+5. If w_lin is a solution for the unconstrained problem, and it satisfies the constraint, then it must be a solution to the constrained problem as well.
+   answer = [a]
+
+6. [b] is true, as we have seen the correspondence between the weight constraint and augmented error.
+   answer = [b]
+
+Regularized Linear Regression
+7. Implement regularized linear regression. Get digit 8 has lowest E_in ~ 7.434%.
+   answer = [d]
+
+8. Ran experiment, get digit 1 has lowest E_out ~ 2.192%.
+   A note: It seems that for most digits, we really can't separate the digits no matter which transform we used. The algorithm just classifies most points as not being that digit.
+   answer = [b]
+
+9. 
