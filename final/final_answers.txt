@@ -39,5 +39,9 @@ Support Vector Machines
 11. Perform the transform and draw the points on a graph. Visually find that the max-margin separating plane is a vertical line at z_1 = 0.5. Therefore the equation is z_1 - 0.5 = 0.
     answer = [c]
 
-12. 
+12. Implement SVM, and obtain 5 support vectors.
+    answer = [c]
+
+Radial Basis Functions
+
 
