@@ -117,7 +117,7 @@ class SoftSVM:
             if self.w is None:
                 raise ValueError
 
-            w, b, X_support, = self.w, self.b, self.X_support
+            w, b, X_support = self.w, self.b, self.X_support
             K = np.power(np.matmul(X, X_support.T) + 1, self.Q)
             y = np.sum(w * K, axis=1) + b
 

@@ -43,5 +43,8 @@ Support Vector Machines
     answer = [c]
 
 Radial Basis Functions
+13. Implement both using libsvm and using qpsolver. Turns out that qpsolver is very unstable, and often gives E_in != 0. Using libsvm, we indeed get E_in = 0 almost all the time.
+    answer = [a]
 
+14. 
 
