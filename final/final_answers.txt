@@ -46,5 +46,17 @@ Radial Basis Functions
 13. Implement both using libsvm and using qpsolver. Turns out that qpsolver is very unstable, and often gives E_in != 0. Using libsvm, we indeed get E_in = 0 almost all the time.
     answer = [a]
 
-14. 
+14. Implement regular RBF with K-means. Ran experiment with K = 9, get SVM wins for ~90% of the time.
+    answer = [e]
+
+15. Ran experiment with K = 12. Get SVM wins ~85% of time.
+    answer = [d]
+
+16. Find that both E_in and E_out go down most often. With higher K, we can fit data better. Are we probably are not overfitting yet with K = 12. Besides, there is no stochastic noise in our experiment.
+    answer = [d]
+
+17. The experiment gives the result both E_in and E_out go up most often. Higher gamma makes each center give more local predictions., which possibly do not give good estimates for both in-sample and out-sample.
+    answer = [c]
+
+18. 
 
