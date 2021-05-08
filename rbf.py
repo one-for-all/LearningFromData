@@ -217,7 +217,7 @@ def error_rate(y1, y2):
 
 
 if __name__ == "__main__":
-    experiment = 17
+    experiment = 18
     if experiment == 13:
         N = 100
         gamma = 1.5
@@ -351,3 +351,21 @@ if __name__ == "__main__":
             elif E_in_12 == E_in_9 and E_out_12 == E_out_9:
                 e_counts += 1
         print("a: {}, b: {}, c: {}, d: {}, e: {}".format(a_counts, b_counts, c_counts, d_counts, e_counts))
+    elif experiment == 18:
+        K = 9
+        gamma = 1.5
+        N_exp = 200
+        N = 100
+        zero_counts = 0
+        for _ in tqdm(range(N_exp)):
+            X, y = Target().generate(N)
+
+            rbf = RegularRBF(K=K, gamma=gamma)
+            rbf.fit(X, y)
+
+            y_hat = rbf.compute_y(X)
+            E_in = error_rate(y_hat, y)
+
+            if np.isclose(E_in, 0):
+                zero_counts += 1
+        print("Percentage of time that Ein = 0: {}".format(zero_counts/N_exp * 100))

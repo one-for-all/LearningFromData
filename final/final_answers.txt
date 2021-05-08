@@ -2,61 +2,89 @@ Final
 Nonlinear Transforms
 1. Count all terms of order <= 10 with 2 variables. Get 2 + 3 + .... + 11 = (2+11)*10/2 = 65 terms.
    Answer = [e]
+Correct.
 
 Bias and Variance
 2. I think the expectation of logistic regression model might not be a logistic regression model. Consider two logistic regression a = theta(x) and b = theta(-x). The average of them will tend to 0.5 as x-> infinity and x-> minus infinity. This average would not be a logistic regression model.
    answer = [d]
+Correct.
 
 Overfitting
 3. [d] is false. Suppose we have two hypothesis A and B. E_in_A = 1, E_out_A = 2, and E_in_B = 0, E_out_B = 3. In this case, there is overfitting. While if E_in_B = 2, E_out_B = 5, (keeping their difference the same), there is no overfitting.
    answer = [d]
+Correct.
 
 4. [d] is true, since stochastic noise is in the dataset that we try to fit, before considering what our hypothesis set is.
    answer = [d]
+Correct.
 
 Regularization
 5. If w_lin is a solution for the unconstrained problem, and it satisfies the constraint, then it must be a solution to the constrained problem as well.
    answer = [a]
+Correct.
 
 6. [b] is true, as we have seen the correspondence between the weight constraint and augmented error.
    answer = [b]
+Correct.
 
 Regularized Linear Regression
 7. Implement regularized linear regression. Get digit 8 has lowest E_in ~ 7.434%.
    answer = [d]
+Correct.
 
 8. Ran experiment, get digit 1 has lowest E_out ~ 2.192%.
    A note: It seems that for most digits, we really can't separate the digits no matter which transform we used. The algorithm just classifies most points as not being that digit.
    answer = [b]
+Correct.
 
 9. Ran the experiment. [e] is true. E_out for "5 vs. all" improves with transform, but only by a very small amount.
    answer = [e]
+Correct.
 
 10. Ran the experiment. Going from lambda = 1 to lambda = 0.01, E_in decreases, while E_out increases, which indicates overfitting. And it makes sense since as lambda gets smaller, we are putting less regularization which makes the model more prone to overfit.
    answer = [a]
+Correct.
 
 Support Vector Machines
 11. Perform the transform and draw the points on a graph. Visually find that the max-margin separating plane is a vertical line at z_1 = 0.5. Therefore the equation is z_1 - 0.5 = 0.
     answer = [c]
+Correct.
 
 12. Implement SVM, and obtain 5 support vectors.
     answer = [c]
+Correct.
 
 Radial Basis Functions
 13. Implement both using libsvm and using qpsolver. Turns out that qpsolver is very unstable, and often gives E_in != 0. Using libsvm, we indeed get E_in = 0 almost all the time.
     answer = [a]
+Correct.
 
 14. Implement regular RBF with K-means. Ran experiment with K = 9, get SVM wins for ~90% of the time.
     answer = [e]
+Correct.
 
 15. Ran experiment with K = 12. Get SVM wins ~85% of time.
     answer = [d]
+Correct.
 
 16. Find that both E_in and E_out go down most often. With higher K, we can fit data better. Are we probably are not overfitting yet with K = 12. Besides, there is no stochastic noise in our experiment.
     answer = [d]
+Correct.
 
 17. The experiment gives the result both E_in and E_out go up most often. Higher gamma makes each center give more local predictions., which possibly do not give good estimates for both in-sample and out-sample.
     answer = [c]
+Correct.
 
-18. 
+18. Ran experiment, find that E_in = 0 for ~ 3.5% of the time.
+    answer = [a]
+Correct.
 
+Bayesian Priors
+19. Perform the bayesian computation, and obtain that P(h=f | D) \prop h.
+    answer = [b]
+Correct.
+
+Aggregation
+20. Perform the computation for case C, with one data point. Obtain an inequality that always holds just based on algebra: 1/2 * (g1^2 + g2^2) >= g1 * g2. The former represents the average, and the later represents the combined hypothesis. This indicates that [c] is true.
+    answer = [c]
+Correct.
